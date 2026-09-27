@@ -19,8 +19,6 @@ Global install, available in every project:
 npx skills add fonsecach/go-clean-api -g
 ```
 
-This is the same `npx` install path used for skills published on GitHub. The Tech Leads Club wizard (`npx @tech-leads-club/agent-skills`) only lists skills in that catalog. This repository is the source you install directly.
-
 ## Layout
 
 ```text
