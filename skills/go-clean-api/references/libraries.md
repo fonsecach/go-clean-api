@@ -69,11 +69,11 @@ Rules that keep telemetry from becoming a hard dependency:
 - Dial the collector in a way that does not block startup. On setup error, log a warning and keep serving. Shutdown joins the tracer, meter, and logger providers and is safe to call when setup was skipped.
 - Resource attributes: `service.name`, `service.version`, `deployment.environment`.
 - Sample traces with a ratio (parent-based). Production does not keep every span.
-- HTTP middleware is `otelchi` with the chi route set (`WithChiRoutes`) plus request duration and active requests. The label is the template (`/api/v1/companies/{cnpj}`), never the raw path. A raw path explodes cardinality.
+- HTTP middleware is `otelchi` with the chi route set (`WithChiRoutes`) plus request duration and active requests. The label is the template (`/api/v1/orders/{id}`), never the raw path. A raw path explodes cardinality.
 - Propagate W3C trace context and baggage.
 - `slog` JSON on stdout. Wrap the handler so a record inside a span gains `trace_id` and `span_id`. When the log provider is up, also hand records to the `otelslog` bridge (`NewCombinedLogger`). stdout stays even if the collector does not.
 - Start runtime instrumentation on the same meter provider (heap, GC, goroutines). A failure there is a warning, not a crash.
-- Register pgx pool stats (acquired, idle, max) under a pool name such as `app` or `receita`.
+- Register pgx pool stats (acquired, idle, max) under a pool name such as `app`.
 - Business counters (`quota_exceeded`, lockout, cache hit, fallback) are created lazily on the global meter. With no provider they are no-ops, so call sites do not care whether telemetry started.
 
 Suggested environment:
@@ -81,9 +81,9 @@ Suggested environment:
 ```bash
 OTEL_ENABLED=true
 OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4317
-OTEL_SERVICE_NAME=api-dados-empresas
+OTEL_SERVICE_NAME=my-api
 DEPLOYMENT_ENVIRONMENT=production
 OTEL_TRACES_SAMPLER_ARG=0.10
 ```
 
-Outside the process, the collector fans out: metrics to Prometheus, logs to Loki, traces to Tempo, dashboards in Grafana. Host and database exporters (node exporter, postgres exporter) are deploy concerns. They do not belong in `go.mod`.
+Outside the process, the collector fans out: metrics to Prometheus, logs to Loki, traces to Tempo, dashboards in Grafana. Generate that provisioning with the sibling skill `go-clean-observability` (`scripts/render_grafana.py`). Host and database exporters (node exporter, postgres exporter) are deploy concerns. They do not belong in `go.mod`.

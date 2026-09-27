@@ -140,7 +140,7 @@ func run() error {
 Both are part of reproducing this service, not a later project.
 
 - **Docs.** `docs/openapi.yaml` is the source of truth. `docs/docs.go` embeds it. `GET /docs` serves Scalar. `GET /docs/openapi.yaml` serves the spec. Details and the HTML shell: [libraries.md](references/libraries.md).
-- **Telemetry.** OpenTelemetry over OTLP/gRPC, `otelchi` for HTTP, `slog` JSON with `trace_id` and `span_id`, runtime and pool metrics. Disabled means zero providers. Setup failure is warn-and-continue. Backends (collector, Prometheus, Loki, Tempo, Grafana) stay outside the process.
+- **Telemetry.** OpenTelemetry over OTLP/gRPC, `otelchi` for HTTP, `slog` JSON with `trace_id` and `span_id`, runtime and pool metrics. Disabled means zero providers. Setup failure is warn-and-continue. Backends stay outside the process. Collector, Prometheus, Loki, Tempo, and the Grafana dashboard come from the sibling skill `go-clean-observability`.
 
 ## Validation report
 
