@@ -1,12 +1,13 @@
 # go-clean-api
 
-Agent skill that validates and reproduces a Go HTTP API in inward-pointing layers: `cmd`, `config`, `domain`, `application`, `infrastructure`, `delivery`. Includes the documentation and OpenTelemetry library set used by that layout.
+Agent skills for a Go HTTP API whose dependencies point inward: `cmd`, `config`, `domain`, `application`, `infrastructure`, `delivery`.
 
-`SKILL.md` stays under 500 lines. Module paths and wiring notes live in `references/`. A small script checks import direction.
+- `go-clean-api` validates and reproduces that layout. Module paths and the OpenTelemetry library set live in `references/`. A small script checks import direction.
+- `go-clean-observability` is the accessory skill for the telemetry stack: one OpenTelemetry Collector fans out to Prometheus, Loki, and Tempo, and Grafana is generated from the template in that skill. It does not decide which package owns the code.
 
 ## Install
 
-The [Skills CLI](https://github.com/vercel-labs/skills) discovers `skills/<name>/SKILL.md`:
+The [Skills CLI](https://github.com/vercel-labs/skills) discovers every `skills/<name>/SKILL.md` in this repository:
 
 ```bash
 npx skills add fonsecach/go-clean-api
@@ -27,6 +28,22 @@ skills/go-clean-api/
 ├── SKILL.md
 ├── references/libraries.md
 └── scripts/check_layers.py
+
+skills/go-clean-observability/
+├── SKILL.md
+├── LICENSE
+├── references/grafana-lgtm.md
+├── references/grafana-template/
+└── scripts/render_grafana.py
+```
+
+Generate Grafana provisioning for a service:
+
+```bash
+python3 skills/go-clean-observability/scripts/render_grafana.py \
+  --service-name my-api \
+  --title "My API" \
+  --out docker/observability/grafana/provisioning
 ```
 
 ## Check a module
@@ -39,4 +56,4 @@ Exit 0 when layer imports hold. Exit 1 lists the files that import a package the
 
 ## License
 
-MIT
+MIT. `skills/go-clean-observability/LICENSE` keeps both copyright notices: the original observability text and the Grafana template added here.
